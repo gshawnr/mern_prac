@@ -1,3 +1,16 @@
-node_modules
+# Root-level ignores
 .env
-client/node_modules
+node_modules/
+
+# Ignore client and server node_modules
+client/node_modules/
+server/node_modules/
+
+# Optional: ignore build folders
+client/build/
+server/dist/
+
+# Mac/Linux/Windows OS files
+.DS_Store
+Thumbs.db
+
