@@ -13,7 +13,7 @@ export const fetchData = async ({ url = "", queryParams = {} }) => {
     throw new Error(`HTTP error - status: ${res.status}`);
   }
 
-  return res.json();
+  return await res.json();
 };
 
 export const postData = async ({ url = "", payload = {} }) => {

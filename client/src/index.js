@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import App from "./screens/App";
 import Agents from "./screens/Agents";
 import Properties from "./screens/Properties";
+import PropertyView from "./screens/PropertyView";
 
 import "./index.css";
 
@@ -18,6 +19,7 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/agents" element={<Agents />} />
         <Route path="/properties" element={<Properties />} />
+        <Route path="/property/:id" element={<PropertyView />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
