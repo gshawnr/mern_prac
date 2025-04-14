@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 interface IProperty extends Document {
-  agentId: string;
+  agent: string;
   address: {
     street: string;
     province: string;
@@ -13,7 +13,7 @@ interface IProperty extends Document {
 
 const propertySchema = new Schema<IProperty>(
   {
-    agentId: { type: String, required: true },
+    agent: { type: String, required: true },
     address: {
       street: String,
       province: String, // update to use predefined list

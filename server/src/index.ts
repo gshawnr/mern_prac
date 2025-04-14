@@ -1,17 +1,17 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
-import propertyRoutes from "./routes/propertyRoutes";
-import agentRoutes from "./routes/agentRoutes";
+
+import PropertyRoutes from "./routes/propertyRoutes";
+import AgentRoutes from "./routes/agentRoutes";
 
 const app = express();
 
+// middleware
+app.use(express.json());
 app.use(cors());
-app.options("*", cors());
-app.use(bodyParser.json());
 
-// Property routes
-app.use("/api/property", propertyRoutes);
-app.use("/api/agent", agentRoutes);
+// routes
+app.use("/api/property", PropertyRoutes);
+app.use("/api/agent", AgentRoutes);
 
 export default app;

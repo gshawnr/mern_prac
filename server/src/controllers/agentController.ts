@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import Agent from "../models/Agent";
 import { generateRandomId } from "../utils/generateId";
+import mongoose from "mongoose";
 
 export const getAgent = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { params = {} } = req;
-    console.log("req params", params);
+    const { query = {} } = req;
 
     const dbRes = await Agent.find();
 
@@ -16,6 +16,31 @@ export const getAgent = async (req: Request, res: Response): Promise<void> => {
     res
       .status(500)
       .json({ message: "Server Error", error: (e as Error).message });
+  }
+};
+
+export const getAgentByEmail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const {
+      params: { email },
+    } = req;
+
+    console.log("Checking", email);
+
+    const agent = await Agent.findOne({ email });
+
+    if (!agent) {
+      res.status(404).json({ message: "not found" });
+      return;
+    }
+
+    res.status(200).json(agent);
+  } catch (e) {
+    console.log(JSON.stringify(e));
+    res.status(500).json({ message: (e as Error).message });
   }
 };
 
