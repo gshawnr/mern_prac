@@ -1,63 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router";
-import { fetchData } from "../utils/api";
+import React, { useState, useEffect } from "react";
 
 function Agents() {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
   const [agents, setAgents] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAgents = async () => {
+    const fetchData = async () => {
       try {
-        const data = await fetchData({ url: "agent" });
-        setAgents(data);
+        // fetch data to display
       } catch (e) {
-        setError("Server Error");
+        console.log(`Agents error: ${e.message}`);
+        setError(e);
       }
     };
 
-    fetchAgents();
+    fetchData();
   }, []);
 
-  const handleNavigation = () => {
-    navigate("/");
+  const formatAgents = () => {
+    const agentsArr = [
+      { _id: "1", name: "first" },
+      { _id: "2", name: "second" },
+      { _id: "3", name: "third" },
+    ];
+
+    return (
+      <ul>
+        {agentsArr.map((agent) => {
+          const { _id, name } = agent;
+          return (
+            <li style={{ listStyle: "none" }}>
+              {_id} {name}
+            </li>
+          );
+        })}
+      </ul>
+    );
   };
 
-  return (
-    <div>
-      <Button
-        variant="contained"
-        onClick={handleNavigation}
-        sx={{ margin: "10px" }}
-      >
-        Home
-      </Button>
-      <h2 style={{ textAlign: "center" }}>Agents List</h2>
-
-      <div style={{ width: "70%", margin: "auto" }}>
-        <ul>
-          {agents.map((agent) => {
-            const { agentId, email } = agent;
-            return (
-              <li key={agentId}>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "250px 1fr",
-                  }}
-                >
-                  <p style={{ fontSize: "20px" }}>ID: {agentId}</p>
-                  <p style={{ fontSize: "20px" }}>Email: {email}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </div>
-  );
+  return <div>{agents ? formatAgents() : <p>...Loading</p>}</div>;
 }
 
 export default Agents;
