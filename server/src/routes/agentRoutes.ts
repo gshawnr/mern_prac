@@ -1,17 +1,12 @@
 import express from "express";
-import {
-  createAgent,
-  getAgent,
-  getAgentByEmail,
-} from "../controllers/agentController";
+import { getAgents, createAgent } from "../controllers/agentController";
 
-const router = express.Router();
+const Router = express.Router();
 
 // GET
-router.get("/", getAgent);
-router.get("/:email", getAgentByEmail);
+Router.get("/", getAgents);
 
 // POST
-router.post("/", createAgent);
+Router.post("/", createAgent);
 
-export default router;
+export default Router;

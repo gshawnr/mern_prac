@@ -1,27 +1,19 @@
 import express from "express";
 import {
-  createProperty,
   getProperty,
+  createProperty,
   getPropertyById,
-  deletePropertyById,
-  updatePropertyById,
-  updateProperty,
+  getPropertyByQuery,
 } from "../controllers/propertyController";
 
-const router = express.Router();
+const Router = express.Router();
 
-// GET route to fetch Properties
-router.get("/", getProperty);
-router.get("/:id", getPropertyById);
+// GET
+Router.get("/", getProperty);
+Router.get("/query", getPropertyByQuery);
+Router.get("/:id", getPropertyById);
 
-// POST route to create Property
-router.post("/", createProperty);
+// POST
+Router.post("/", createProperty);
 
-// PUT update routes
-router.patch("/:id", updatePropertyById);
-router.patch("/", updateProperty);
-
-// DELETE
-router.delete("/:id", deletePropertyById);
-
-export default router;
+export default Router;
