@@ -12,6 +12,10 @@ client/build/
 mongooseserver/dist/
 mongoserver/dist/
 
+# env files
+mongooseserver/.env
+mongoserver/.env
+
 # Mac/Linux/Windows OS files
 .DS_Store
 Thumbs.db
