@@ -1,92 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { Button } from "@mui/material";
-import { useNavigate, Link } from "react-router";
-import { fetchData } from "../utils/api";
+
+import { getData } from "../utils/api";
+import PropertyList from "../components/PropertyList";
+
+import "./Properties.css";
 
 function Properties() {
+  const [error, setError] = useState(null);
   const [properties, setProperties] = useState(null);
-  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchData = async () => {
       try {
-        const data = await fetchData({ url: "property" });
+        const data = await getData("/property");
         setProperties(data);
-        setTimeout(() => {
-          // nothing happening here
-        }, 9000);
       } catch (e) {
-        console.log(e);
-        setError(`server Error: ${e.message}`);
+        console.log(`Propeties error: ${e.message}`);
+        setError(e);
       }
     };
-    fetchProperties();
+
+    fetchData();
   }, []);
 
-  const handleNavigation = () => {
-    navigate("/");
-  };
+  const renderContent = () => {
+    if (error) {
+      return <h2>{error.message}</h2>;
+    }
 
-  const getDisplay = () => {
-    if (properties === null) return <p>...Loading</p>;
-    if (properties.length == 0) return <p>No items to display</p>;
+    if (!properties) {
+      return <h2>....Loading</h2>;
+    }
 
-    return (
-      <div style={{ width: "80%", margin: "auto" }}>
-        <ul>
-          {properties.map((property, index) => {
-            const {
-              _id,
-              agent,
-              address: { street, province, postalCode },
-            } = property;
-            return (
-              <li style={{ margin: "15px 0" }} key={_id}>
-                <Link
-                  style={{ color: "inherit", textDecoration: "none" }}
-                  to={`/property/${_id}`}
-                >
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "375px 250px 50px 100px",
-                      fontSize: "20px",
-                    }}
-                  >
-                    <p>Agent: {agent}</p>
-                    <p>{street}</p>
-                    <p>{province}</p>
-                    <p>{postalCode}</p>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    );
+    return <PropertyList properties={properties} />;
   };
 
   return (
     <div>
-      <Button
-        variant="contained"
-        onClick={handleNavigation}
-        sx={{ margin: "10px" }}
-      >
+      <Button variant="contained" onClick={() => navigate("/")}>
         Home
       </Button>
 
-      <h2 style={{ textAlign: "center" }}>Properties List</h2>
-
-      {getDisplay()}
+      <h1>Properties</h1>
+      {renderContent()}
     </div>
   );
 }
 
 export default Properties;
-
-const classes = {
-  p: { fontSize: "20px" },
-};

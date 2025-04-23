@@ -1,46 +1,17 @@
-import { useNavigate } from "react-router";
-import { Button } from "@mui/material";
-import CreateProperty from "./CreateProperty";
-import CreateAgent from "./CreateAgent";
+import { Routes, Route } from "react-router";
 
-import "./App.css";
+import Home from "./Home";
+import Agents from "./Agents";
+import Properties from "./Properties";
 
-function App() {
-  const navigate = useNavigate();
-
-  const handleNavigation = (e) => {
-    const { name } = e.target;
-    navigate(`/${name}`);
-  };
+const App = () => {
   return (
-    <div className="App">
-      <div>
-        <div>
-          <Button
-            name="agents"
-            variant="contained"
-            onClick={handleNavigation}
-            sx={{ margin: "10px" }}
-          >
-            Agents
-          </Button>
-
-          <Button
-            name="properties"
-            variant="contained"
-            onClick={handleNavigation}
-            sx={{ margin: "10px" }}
-          >
-            Properties
-          </Button>
-        </div>
-
-        <CreateAgent />
-
-        <CreateProperty />
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/agents" element={<Agents />} />
+      <Route path="/properties" element={<Properties />} />
+    </Routes>
   );
-}
+};
 
 export default App;

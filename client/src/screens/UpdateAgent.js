@@ -1,7 +1,6 @@
-import { FormControl } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-function CreateAgent() {
+function UpdateAgent() {
   const [error, setError] = useState(null);
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
@@ -14,7 +13,7 @@ function CreateAgent() {
 
       const agent = { firstName, lastName, email, telephone };
       const res = await fetch("http://localhost:5000/api/agent", {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -85,4 +84,4 @@ function CreateAgent() {
   );
 }
 
-export default CreateAgent;
+export default UpdateAgent;

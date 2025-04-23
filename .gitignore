@@ -4,11 +4,13 @@ node_modules/
 
 # Ignore client and server node_modules
 client/node_modules/
-server/node_modules/
+mongooseserver/node_modules/
+mongoserver/node_modules/
 
 # Optional: ignore build folders
 client/build/
-server/dist/
+mongooseserver/dist/
+mongoserver/dist/
 
 # Mac/Linux/Windows OS files
 .DS_Store
