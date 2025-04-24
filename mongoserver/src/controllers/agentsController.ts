@@ -42,7 +42,7 @@ export const addAgent = async (
     const { body } = req;
     const { firstName, lastName, email, telephone } = body;
 
-    const agentDoc = await agentService.createAgent(
+    const agentDoc = await agentService.saveAgent(
       firstName,
       lastName,
       email,

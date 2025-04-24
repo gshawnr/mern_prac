@@ -19,7 +19,6 @@ export default class AgentService {
   private collection() {
     return this.db.collection("agents");
   }
-  constructor() {}
 
   async allAgents(queryParams: ParsedQs): Promise<Document[]> {
     try {
@@ -41,7 +40,7 @@ export default class AgentService {
     }
   }
 
-  async createAgent(
+  async saveAgent(
     firstName: string,
     lastName: string,
     email: string,
@@ -52,6 +51,7 @@ export default class AgentService {
 
       const doc = agent.toDocument();
 
+      // TODO this is incorrect for an update.  doc._id will never exist here
       if (doc._id) {
         delete doc._id;
         const res = await this.collection().findOneAndUpdate(
@@ -61,7 +61,7 @@ export default class AgentService {
         );
 
         if (!res) {
-          throw new Error("agent save error: unable to save updates");
+          throw new Error("agent save error: unable to update agent");
         }
 
         return res.value;
