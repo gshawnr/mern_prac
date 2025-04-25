@@ -1,6 +1,8 @@
 import { Document, ObjectId } from "mongodb";
 import { getDB } from "../db/mongoClient";
 import Property from "../models/Property";
+import { ParamsDictionary } from "express-serve-static-core";
+import { DeleteResult } from "mongoose";
 
 type getPropertyInput = {
   street?: string;
@@ -25,7 +27,7 @@ export default class PropertyService {
     return this.db.collection("properties");
   }
 
-  async getProperties(params: getPropertyInput): Promise<Document[]> {
+  async getAll(params: getPropertyInput): Promise<Document[]> {
     try {
       let filter: getPropertyInput = { ...params };
       const properties = this.collection().find(filter).toArray();
@@ -40,7 +42,7 @@ export default class PropertyService {
   // getById
 
   // post or update
-  async saveProperty(property: savePropertyInput): Promise<Document> {
+  async save(property: savePropertyInput): Promise<Document> {
     try {
       const { street, city, province, agentId, _id } = property;
 
@@ -78,6 +80,25 @@ export default class PropertyService {
     } catch (err) {
       const msg = (err as Error).message || "create property error";
       console.log(`PropertyService createProperty error: ${msg}`);
+      throw new Error(msg);
+    }
+  }
+
+  async deleteById(params: ParamsDictionary): Promise<DeleteResult> {
+    try {
+      const { id } = params;
+
+      if (!(typeof id === "string" && ObjectId.isValid(id))) {
+        throw new Error("invalid id provided");
+      }
+
+      const _id = new ObjectId(id);
+      const res = await this.collection().deleteOne({ _id });
+
+      return res;
+    } catch (err) {
+      const msg = (err as Error).message || "unable to delete property";
+      console.log(`PropertyService deleteById error: ${msg}`);
       throw new Error(msg);
     }
   }
