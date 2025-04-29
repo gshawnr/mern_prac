@@ -11,6 +11,14 @@ type AgentQPFilter = {
   email?: string;
 };
 
+type EditAgentInput = {
+  agentId: ObjectId | string;
+  firstName?: string;
+  lastName?: string;
+  telephone?: string;
+  email?: string;
+};
+
 export default class AgentService {
   private get db() {
     return getDB();
@@ -40,7 +48,7 @@ export default class AgentService {
     }
   }
 
-  async saveAgent(
+  async addAgent(
     firstName: string,
     lastName: string,
     email: string,
@@ -72,8 +80,43 @@ export default class AgentService {
         return doc;
       }
     } catch (err) {
-      console.log(`createAgent err: ${(err as Error).message}`);
+      console.log(`addAgent err: ${(err as Error).message}`);
       throw new Error("server error: unable to create new agent");
+    }
+  }
+
+  async editAgent(input: EditAgentInput): Promise<Document> {
+    try {
+      const { agentId, firstName, lastName, email, telephone } = input;
+
+      if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+        throw new Error("invalid agent ID provided");
+      }
+
+      let filter = { _id: new ObjectId(agentId) };
+
+      let update: any = {};
+      if (firstName || lastName || email || telephone) {
+        if (firstName) update.firstName = firstName;
+        if (lastName) update.lastName = lastName;
+        if (email) update.email = email;
+        if (telephone) update.telephone = telephone;
+      }
+
+      const doc = await this.collection().findOneAndUpdate(
+        filter,
+        { $set: update },
+        { returnDocument: "after" }
+      );
+
+      if (!doc) {
+        throw new Error("unable to update agent");
+      }
+
+      return doc;
+    } catch (err) {
+      console.log(`editAgent err: ${(err as Error).message}`);
+      throw new Error("server error: unable to edit agent");
     }
   }
 

@@ -1,16 +1,24 @@
 import express from "express";
 import {
   getAgents,
-  addAgent,
+  createAgent,
   getAgentWithId,
   deleteAgentWithId,
+  updateAgent,
 } from "../controllers/agentsController";
 
 const router = express.Router();
 
-// Agent routes
+// GET
 router.get("/", getAgents);
 router.get("/:agentId", getAgentWithId);
-router.post("/", addAgent);
+
+// POST
+router.post("/", createAgent);
+
+// PATCH
+router.patch("/:agentId", updateAgent);
+
+// DELETE
 router.delete("/:agentId", deleteAgentWithId);
 export default router;

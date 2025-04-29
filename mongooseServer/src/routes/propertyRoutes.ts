@@ -5,13 +5,19 @@ import {
   getPropertyById,
 } from "../controllers/propertyController";
 
-const Router = express.Router();
+const router = express.Router();
 
 // GET
-Router.get("/", getProperty);
-Router.get("/:id", getPropertyById);
+router.get("/", getProperty);
+router.get("/:id", getPropertyById);
 
 // POST
-Router.post("/", createProperty);
+router.post("/", createProperty);
 
-export default Router;
+// PATCH
+// router.patch("/:id", updateProperty) // TODO
+
+// DELETE
+// router.delete("/:id", deleteById) // TODO
+
+export default router;

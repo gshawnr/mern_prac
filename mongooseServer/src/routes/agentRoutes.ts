@@ -7,18 +7,19 @@ import {
   getAgentById,
 } from "../controllers/agentController";
 
-const Router = express.Router();
+const router = express.Router();
 
 // GET
-Router.get("/", getAgents);
-Router.get("/:agentId", getAgentById);
+router.get("/", getAgents);
+router.get("/:agentId", getAgentById);
 
 // POST
-Router.post("/", createAgent);
+router.post("/", createAgent);
 
 // PATCh
-Router.patch("/", updateAgent);
+router.patch("/:agentId", updateAgent); // FIX
 
 // DELETE
-Router.delete("/", deleteAgent);
-export default Router;
+// Router.delete("/", deleteAgent);
+router.delete("/:agentId", deleteAgent); // TODO
+export default router;
