@@ -14,6 +14,6 @@ app.use(logger);
 
 // routing
 app.use("/api/property", propertyRoutes);
-app.use("/api/agent", agentRoutes);
+app.use("/api/agents", agentRoutes);
 
 export default app;

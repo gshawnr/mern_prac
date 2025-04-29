@@ -4,12 +4,14 @@ import {
   getAgents,
   createAgent,
   deleteAgent,
+  getAgentById,
 } from "../controllers/agentController";
 
 const Router = express.Router();
 
 // GET
 Router.get("/", getAgents);
+Router.get("/:agentId", getAgentById);
 
 // POST
 Router.post("/", createAgent);

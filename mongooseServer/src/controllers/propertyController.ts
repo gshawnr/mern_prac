@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import Property from "../models/Property";
 import Agent from "../models/Agent";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Types, Schema } from "mongoose";
+
+type queryFilter = {
+  province?: string;
+  agent?: Types.ObjectId;
+};
 
 export const getProperty = async (
   req: Request,
@@ -9,7 +14,22 @@ export const getProperty = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const properties = await Property.find({}).populate("listingAgent");
+    const { query } = req;
+    const { province, agentId } = query;
+
+    let filter: queryFilter = {};
+
+    if (province || agentId) {
+      if (province && typeof province === "string") filter.province = province;
+      if (
+        agentId &&
+        typeof agentId === "string" &&
+        Types.ObjectId.isValid(agentId)
+      )
+        filter.agent = new Types.ObjectId(agentId);
+    }
+
+    const properties = await Property.find(filter);
 
     if (!properties) {
       res.status(404).json({ message: "not found" });
@@ -38,7 +58,7 @@ export const getPropertyById = async (
       return;
     }
 
-    const property = await Property.findById(id).populate("listingAgent");
+    const property = await Property.findById(id);
 
     if (!property) {
       res.status(404).json({ message: "not found" });
@@ -46,60 +66,6 @@ export const getPropertyById = async (
     }
 
     res.status(200).json(property);
-  } catch (e) {
-    const msg = (e as Error).message;
-    console.log(`getPropertyById errro: ${msg}`);
-    res.status(500).json({ message: `server error: ${msg} ` });
-  }
-};
-
-export const getPropertyByQuery = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { query } = req;
-    const { agentEmail, province } = query;
-
-    const properties = await Property.aggregate([
-      {
-        $lookup: {
-          from: "agents", // must match the collection name in MongoDB (usually lowercase plural)
-          localField: "listingAgent",
-          foreignField: "_id",
-          as: "listingAgent",
-        },
-      },
-      {
-        $unwind: "$listingAgent", // flatten the array from $lookup
-      },
-      {
-        $match: {
-          $or: [
-            { "listingAgent.email": agentEmail }, // filter on agent field
-            { "address.province": province }, // filter on province field
-          ],
-        },
-      },
-      {
-        $project: {
-          address: 1,
-          listingAgent: {
-            email: 1,
-            firstName: 1,
-            lastName: 1,
-          },
-        },
-      },
-    ]);
-
-    if (!properties) {
-      res.status(404).json({ message: "not found" });
-      return;
-    }
-
-    res.status(200).json(properties);
   } catch (e) {
     const msg = (e as Error).message;
     console.log(`getPropertyById errro: ${msg}`);
@@ -127,12 +93,10 @@ export const createProperty = async (
 
     // create the property
     const propertyDetails = {
-      address: {
-        street: body.street,
-        city: body.city,
-        province: body.province,
-      },
-      listingAgent: agent._id,
+      street: body.street,
+      city: body.city,
+      province: body.province,
+      agent: agent._id,
     };
 
     const property = new Property(propertyDetails);

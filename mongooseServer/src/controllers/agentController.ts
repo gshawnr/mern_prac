@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Request, Response, NextFunction } from "express";
 import Agent from "../models/Agent";
 
@@ -27,6 +28,35 @@ export const getAgents = async (
     const message = (e as Error).message || "";
     console.log(message);
     res.status(500).json({ message: `server error: ${message}` });
+  }
+};
+
+export const getAgentById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { params } = req;
+    const { agentId } = params;
+
+    if (!Types.ObjectId.isValid(agentId)) {
+      res.status(400).json({ message: "invalid agent ID" });
+      return;
+    }
+
+    const agent = await Agent.findById(agentId);
+
+    if (!agent) {
+      res.status(404).json({ message: "agent not found" });
+      return;
+    }
+
+    res.status(200).send(agent);
+  } catch (err) {
+    const msg = (err as Error).message || "error fetching agent";
+    console.log(`agentController getAgentById error: ${msg}`);
+    res.status(500).json({ message: "server error: unable to fetch agent" });
   }
 };
 
