@@ -17,9 +17,8 @@ router.get("/:agentId", getAgentById);
 router.post("/", createAgent);
 
 // PATCh
-router.patch("/:agentId", updateAgent); // FIX
+router.patch("/:agentId", updateAgent);
 
 // DELETE
-// Router.delete("/", deleteAgent);
-router.delete("/:agentId", deleteAgent); // TODO
+router.delete("/:agentId", deleteAgent);
 export default router;

@@ -9,11 +9,16 @@ export const getAgents = async (
 ) => {
   try {
     const { query } = req;
-    const { email, lastName } = query;
+    const { firstName, lastName, email, telephone } = query;
 
     const filter: any = {};
-    if (email) filter.email = email;
-    if (lastName) filter.lastName = lastName;
+
+    if (firstName || lastName || email || telephone) {
+      if (firstName) filter.firstName = firstName;
+      if (lastName) filter.lastName = lastName;
+      if (email) filter.email = email;
+      if (telephone) filter.telephone = telephone;
+    }
 
     const agents = await Agent.find(filter);
 
@@ -67,22 +72,21 @@ export const createAgent = async (
 ): Promise<void> => {
   try {
     const { body } = req || {};
-    console.log("body in createAgent be", body);
+    const { firstName, lastName, email, telephone } = body;
 
-    const agentDetails = {
-      firstName: body.firstName,
-      lastName: body.lastName,
-      email: body.email,
-      telephone: body.telephone,
-    };
+    if (!firstName || !lastName || !email || !telephone) {
+      res.status(400).json({ message: "invalid agent input" });
+      return;
+    }
 
-    const agent = new Agent(agentDetails);
-    const dbRes = await agent.save();
+    const agent = new Agent({ firstName, lastName, email, telephone });
+    const agentDoc = await agent.save();
 
-    res.status(201).json(dbRes);
-  } catch (e) {
-    const msg = (e as Error).message;
+    res.status(201).json(agentDoc);
+  } catch (err) {
+    const msg = (err as Error).message;
     console.log(`createAgent error: ${msg}`);
+    res.status(500).json({ message: "sever error: unable to save agent" });
   }
 };
 
@@ -92,20 +96,23 @@ export const updateAgent = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { body } = req || {};
-    const { email, firstName, lastName, telephone } = body;
+    const { body, params } = req || {};
 
-    if (!email) {
-      res.status(400).json("email is required and cannot be updated");
+    const { agentId } = params;
+    if (!Types.ObjectId.isValid(agentId)) {
+      res.status(400).json({ message: "invalid agent ID" });
       return;
     }
+
+    const { email, firstName, lastName, telephone } = body;
 
     const update: any = {};
     if (firstName) update.firstName = firstName;
     if (lastName) update.lastName = lastName;
+    if (email) update.email = email;
     if (telephone) update.telephone = telephone;
 
-    const agent = await Agent.findOneAndUpdate({ email }, update, {
+    const agent = await Agent.findOneAndUpdate({ _id: agentId }, update, {
       new: true,
       runValidators: true,
     });
@@ -123,20 +130,20 @@ export const deleteAgent = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { body } = req;
+    const { params } = req;
+    const { agentId } = params;
 
-    if (!body.email) {
-      res
-        .status(400)
-        .json({ message: "email of agent to be removed is required" });
+    if (!Types.ObjectId.isValid(agentId)) {
+      res.status(400).json({ message: "invalid agent ID" });
       return;
     }
 
-    const deletedAgent = await Agent.findOneAndDelete({ email: body.email });
+    const deletedAgent = await Agent.findOneAndDelete({ _id: agentId });
 
     res.status(200).json(deletedAgent);
   } catch (err) {
-    const msg = (err as Error).message || "";
-    res.status(500).json({ message: msg });
+    const msg = (err as Error).message || "unable to delete agent";
+    console.log(`agentController deleteAgent error: ${msg}`);
+    res.status(500).json({ message: "server error: unable to delete agent" });
   }
 };
