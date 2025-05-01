@@ -3,6 +3,8 @@ import {
   getProperty,
   createProperty,
   getPropertyById,
+  deleteProperty,
+  editProperty,
 } from "../controllers/propertyController";
 
 const router = express.Router();
@@ -15,9 +17,9 @@ router.get("/:id", getPropertyById);
 router.post("/", createProperty);
 
 // PATCH
-// router.patch("/:id", updateProperty) // TODO
+router.patch("/:id", editProperty);
 
 // DELETE
-// router.delete("/:id", deleteById) // TODO
+router.delete("/:id", deleteProperty);
 
 export default router;

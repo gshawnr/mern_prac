@@ -98,8 +98,8 @@ export const updateAgent = async (
   try {
     const { body, params } = req || {};
 
-    const { agentId } = params;
-    if (!Types.ObjectId.isValid(agentId)) {
+    const { id } = params;
+    if (!Types.ObjectId.isValid(id)) {
       res.status(400).json({ message: "invalid agent ID" });
       return;
     }
@@ -112,10 +112,15 @@ export const updateAgent = async (
     if (email) update.email = email;
     if (telephone) update.telephone = telephone;
 
-    const agent = await Agent.findOneAndUpdate({ _id: agentId }, update, {
+    const agent = await Agent.findOneAndUpdate({ _id: id }, update, {
       new: true,
       runValidators: true,
     });
+
+    if (!agent) {
+      res.status(404).json({ message: "agent not found" });
+      return;
+    }
 
     res.status(201).json(agent);
   } catch (e) {
@@ -131,14 +136,19 @@ export const deleteAgent = async (
 ): Promise<void> => {
   try {
     const { params } = req;
-    const { agentId } = params;
+    const { id } = params;
 
-    if (!Types.ObjectId.isValid(agentId)) {
+    if (!Types.ObjectId.isValid(id)) {
       res.status(400).json({ message: "invalid agent ID" });
       return;
     }
 
-    const deletedAgent = await Agent.findOneAndDelete({ _id: agentId });
+    const deletedAgent = await Agent.findOneAndDelete({ _id: id });
+
+    if (!deletedAgent) {
+      res.status(404).json({ message: "agent not found" });
+      return;
+    }
 
     res.status(200).json(deletedAgent);
   } catch (err) {

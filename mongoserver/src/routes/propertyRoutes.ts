@@ -15,7 +15,7 @@ router.get("/", allProperties);
 router.post("/", addProperty);
 
 // PATCH
-// router.patch("/:id", updateProperty)
+// router.patch("/:id", updateProperty) // TODO
 
 // DELETE
 router.delete("/:id", deletePropertyById);
