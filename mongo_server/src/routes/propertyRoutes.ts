@@ -3,19 +3,21 @@ import {
   addProperty,
   allProperties,
   deletePropertyById,
+  getPropertyById,
+  editProperty,
 } from "../controllers/propertyController";
 
 const router = express.Router();
 
 // GET
 router.get("/", allProperties);
-// router.get("/:id", getById) // TODO
+router.get("/:id", getPropertyById);
 
 // POST
 router.post("/", addProperty);
 
 // PATCH
-// router.patch("/:id", updateProperty) // TODO
+router.patch("/:id", editProperty);
 
 // DELETE
 router.delete("/:id", deletePropertyById);

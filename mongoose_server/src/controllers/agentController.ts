@@ -43,14 +43,14 @@ export const getAgentById = async (
 ): Promise<void> => {
   try {
     const { params } = req;
-    const { agentId } = params;
+    const { id } = params;
 
-    if (!Types.ObjectId.isValid(agentId)) {
+    if (!Types.ObjectId.isValid(id)) {
       res.status(400).json({ message: "invalid agent ID" });
       return;
     }
 
-    const agent = await Agent.findById(agentId);
+    const agent = await Agent.findById(id);
 
     if (!agent) {
       res.status(404).json({ message: "agent not found" });

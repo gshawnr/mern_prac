@@ -26,7 +26,9 @@ export const getAgentWithId = async (
 ): Promise<void> => {
   try {
     const { params } = req;
-    const agentDocs = await agentService.getAgentById(params);
+    const { id } = params;
+
+    const agentDocs = await agentService.getAgentById(id);
     res.status(200).json(agentDocs);
   } catch (err) {
     console.log(`getAgents error: ${(err as Error).message}`);
@@ -64,11 +66,12 @@ export const updateAgent = async (
 ): Promise<void> => {
   try {
     const { params, body } = req;
-    const { agentId } = params;
+    const { id } = params;
+
     const { firstName, lastName, email, telephone } = body;
 
     const updatedAgent = await agentService.editAgent({
-      agentId,
+      id,
       firstName,
       lastName,
       email,
@@ -90,7 +93,9 @@ export const deleteAgentWithId = async (
 ): Promise<void> => {
   try {
     const { params } = req;
-    const { deletedCount } = await agentService.deleteAgentById(params);
+    const { id } = params;
+
+    const { deletedCount } = await agentService.deleteAgentById(id);
 
     if (deletedCount === 0) {
       res.status(404).json({ message: "agent not found" });

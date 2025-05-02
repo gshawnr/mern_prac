@@ -3,6 +3,7 @@ import { getDB } from "../db/mongoClient";
 import Property from "../models/Property";
 import { ParamsDictionary } from "express-serve-static-core";
 import { DeleteResult } from "mongoose";
+import AgentService from "./AgentService";
 
 type getPropertyInput = {
   street?: string;
@@ -12,11 +13,18 @@ type getPropertyInput = {
 };
 
 type savePropertyInput = {
-  _id?: ObjectId;
+  id?: ObjectId | string | null;
   street: string;
   city: string;
   agentId: ObjectId;
   province: string;
+};
+
+type propertyEdit = {
+  street?: string;
+  city?: string;
+  agentId?: ObjectId;
+  province?: string;
 };
 
 export default class PropertyService {
@@ -40,16 +48,51 @@ export default class PropertyService {
   }
 
   // getById
+  async getById(id: ObjectId): Promise<Document | null> {
+    try {
+      return await this.collection().findOne({ _id: id });
+    } catch (err) {
+      const msg = (err as Error).message || "unable to get property by ID";
+      console.log(`PropertyService getById error: ${msg}`);
+      throw new Error(msg);
+    }
+  }
 
   // post or update
   async save(property: savePropertyInput): Promise<Document> {
     try {
-      const { street, city, province, agentId, _id } = property;
+      const { id, street, city, province, agentId } = property;
 
-      if (_id) {
+      let validatedAgentId: ObjectId | null = null;
+      if (agentId) {
+        if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+          throw new Error("invalid agentId provided");
+        }
+
+        const agent = new AgentService();
+        const foundAgent = await agent.getAgentById(agentId);
+
+        if (!foundAgent) {
+          throw new Error("invalid agent ID");
+        }
+
+        validatedAgentId = foundAgent._id;
+      }
+
+      if (id) {
+        if (typeof id !== "string" || !ObjectId.isValid(id)) {
+          throw new Error("invalid property ID");
+        }
+
+        const update: propertyEdit = {};
+        if (street) update.street = street;
+        if (city) update.city = city;
+        if (province) update.province = province;
+        if (validatedAgentId) update.agentId = validatedAgentId;
+
         const res = await this.collection().findOneAndUpdate(
-          { _id },
-          { $set: { street, city, province, agentId } },
+          { _id: new ObjectId(id) },
+          { $set: update },
           { returnDocument: "after" }
         );
 
@@ -57,13 +100,16 @@ export default class PropertyService {
           throw new Error("unable to save property updates");
         }
 
-        return res.value;
+        return res;
       } else {
+        if (!street || !city || !province || !validatedAgentId) {
+          throw new Error("valid input required");
+        }
         const propertyInst = new Property({
           street,
           city,
           province,
-          agentId,
+          agentId: validatedAgentId,
         });
 
         const doc = propertyInst.toDocument();

@@ -12,7 +12,7 @@ type AgentQPFilter = {
 };
 
 type EditAgentInput = {
-  agentId: ObjectId | string;
+  id: ObjectId | string;
   firstName?: string;
   lastName?: string;
   telephone?: string;
@@ -87,13 +87,13 @@ export default class AgentService {
 
   async editAgent(input: EditAgentInput): Promise<Document> {
     try {
-      const { agentId, firstName, lastName, email, telephone } = input;
+      const { id, firstName, lastName, email, telephone } = input;
 
-      if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+      if (typeof id !== "string" || !ObjectId.isValid(id)) {
         throw new Error("invalid agent ID provided");
       }
 
-      let filter = { _id: new ObjectId(agentId) };
+      let filter = { _id: new ObjectId(id) };
 
       let update: any = {};
       if (firstName || lastName || email || telephone) {
@@ -120,42 +120,38 @@ export default class AgentService {
     }
   }
 
-  async getAgentById(urlParams: ParamsDictionary): Promise<Document | null> {
+  async getAgentById(id: string | ObjectId): Promise<Document | null> {
     try {
-      const { agentId } = urlParams;
-
-      if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+      if (typeof id !== "string" || !ObjectId.isValid(id)) {
         throw new Error("Invalid agent ID");
       }
 
-      const objectId = new ObjectId(agentId);
+      const objId = new ObjectId(id);
 
-      const agentDoc = await this.collection().findOne({ _id: objectId });
+      const agentDoc = await this.collection().findOne({ _id: objId });
 
       return agentDoc;
     } catch (err) {
       const msg =
         (err as Error).message || "server error: unable to fetch agent by id";
 
-      console.log(`getAgentById err: ${msg}, urlParams: ${urlParams}`);
+      console.log(`getAgentById err: ${msg}, input: ${id}`);
       throw new Error(msg);
     }
   }
 
-  async deleteAgentById(urlParams: ParamsDictionary): Promise<DeleteResult> {
+  async deleteAgentById(id: string | ObjectId): Promise<DeleteResult> {
     try {
-      const { agentId } = urlParams;
-
-      if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+      if (typeof id !== "string" || !ObjectId.isValid(id)) {
         throw new Error("Invalid agent ID");
       }
-      const objectId = new ObjectId(agentId);
+      const objectId = new ObjectId(id);
       return await this.collection().deleteOne({ _id: objectId });
     } catch (err) {
       const msg =
         (err as Error).message || "server error: unable to delete agent by id";
 
-      console.log(`deleteAgentById err: ${msg}, urlParams: ${urlParams}`);
+      console.log(`deleteAgentById err: ${msg}, input: ${id}`);
       throw new Error(msg);
     }
   }

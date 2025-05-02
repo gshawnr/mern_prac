@@ -1,25 +1,24 @@
 import express from "express";
 import {
-  updateAgent,
   getAgents,
   createAgent,
-  deleteAgent,
-  getAgentById,
-} from "../controllers/agentController";
+  getAgentWithId,
+  deleteAgentWithId,
+  updateAgent,
+} from "../controllers/agentsController";
 
 const router = express.Router();
 
 // GET
 router.get("/", getAgents);
-router.get("/:agentId", getAgentById);
+router.get("/:id", getAgentWithId);
 
 // POST
 router.post("/", createAgent);
 
-// PATCh
+// PATCH
 router.patch("/:id", updateAgent);
 
 // DELETE
-router.delete("/:id", deleteAgent);
-
+router.delete("/:id", deleteAgentWithId);
 export default router;

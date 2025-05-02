@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import PropertyService from "../services/PropertyService";
 import AgentService from "../services/AgentService";
 
+// NOTE: input validation (shape) should be completed in the contoller
+
 export const allProperties = async (
   req: Request,
   res: Response,
@@ -38,6 +40,37 @@ export const allProperties = async (
   }
 };
 
+export const getPropertyById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { params } = req;
+    const { id } = params;
+
+    if (typeof id !== "string" || !ObjectId.isValid(id)) {
+      res.status(400).json({ message: "invalid property ID" });
+      return;
+    }
+
+    const property = new PropertyService();
+
+    const doc = await property.getById(new ObjectId(id));
+
+    if (!doc) {
+      res.status(404).json({ message: "property not found" });
+      return;
+    }
+
+    res.status(200).json(doc);
+  } catch (err) {
+    const msg = (err as Error).message || "error getting property";
+    console.log(`propertyController getPropertyById error: ${msg}`);
+    res.status(500).json({ message: "sever error: unable to fetch property" });
+  }
+};
+
 export const addProperty = async (
   req: Request,
   res: Response,
@@ -66,6 +99,46 @@ export const addProperty = async (
     const msg = (err as Error).message || "error saving properties";
     console.log(`propertyController addProperty error: ${msg}`);
     res.status(500).json({ message: "sever error: unable to add property" });
+  }
+};
+
+export const editProperty = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { params, body } = req;
+    const { id } = params;
+    const { street, city, province, agentId } = body;
+
+    if (!street && !city && !province && !agentId) {
+      res.status(400).json({
+        message: "invalid input: at least one valid attribute must be provided",
+      });
+    }
+
+    const property = new PropertyService();
+    const edited = await property.save({
+      id,
+      street,
+      city,
+      province,
+      agentId,
+    });
+
+    if (!edited) {
+      res.status(404).json({ message: "property not found" });
+      return;
+    }
+
+    res.status(201).json(edited);
+  } catch (err) {
+    const msg = (err as Error).message || "unable to edit property";
+    console.log(`propertyController editProperty error: ${msg}`);
+    res
+      .status(500)
+      .json({ message: "server error: unable to update property" });
   }
 };
 
