@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { getData } from "../utils/api";
 import PropertyList from "../components/PropertyList";
 
-import "./Properties.css";
+import styles from "./Properties.module.css";
 
 function Properties() {
   const [error, setError] = useState(null);
@@ -40,7 +40,7 @@ function Properties() {
   };
 
   return (
-    <div>
+    <div className={styles.box}>
       <Button variant="contained" onClick={() => navigate("/")}>
         Home
       </Button>

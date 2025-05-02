@@ -1,0 +1,12 @@
+.listContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.item {
+  list-style: none;
+  padding: 0 25px;
+  font-size: 24px;
+  background-color: lightgoldenrodyellow;
+  min-width: 300px;
+}

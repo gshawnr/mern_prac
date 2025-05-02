@@ -15,7 +15,7 @@ function Agents() {
     const fetchData = async () => {
       try {
         // fetch data to display
-        const data = await getData("/agent");
+        const data = await getData("/agents");
         setAgents(data);
       } catch (e) {
         console.log(`Agents error: ${e.message}`);
