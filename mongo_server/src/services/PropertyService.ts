@@ -65,12 +65,16 @@ export default class PropertyService {
 
       let validatedAgentId: ObjectId | null = null;
       if (agentId) {
-        if (typeof agentId !== "string" || !ObjectId.isValid(agentId)) {
+        if (typeof agentId === "string" && ObjectId.isValid(agentId)) {
+          validatedAgentId = new ObjectId(agentId as string);
+        } else if (agentId instanceof ObjectId) {
+          validatedAgentId = agentId;
+        } else {
           throw new Error("invalid agentId provided");
         }
 
         const agent = new AgentService();
-        const foundAgent = await agent.getAgentById(agentId);
+        const foundAgent = await agent.getAgentById(validatedAgentId);
 
         if (!foundAgent) {
           throw new Error("invalid agent ID");

@@ -122,13 +122,16 @@ export default class AgentService {
 
   async getAgentById(id: string | ObjectId): Promise<Document | null> {
     try {
-      if (typeof id !== "string" || !ObjectId.isValid(id)) {
+      let validatedId;
+      if (typeof id === "string" && ObjectId.isValid(id)) {
+        validatedId = new ObjectId(id);
+      } else if (id instanceof ObjectId) {
+        validatedId = id;
+      } else {
         throw new Error("Invalid agent ID");
       }
 
-      const objId = new ObjectId(id);
-
-      const agentDoc = await this.collection().findOne({ _id: objId });
+      const agentDoc = await this.collection().findOne({ _id: validatedId });
 
       return agentDoc;
     } catch (err) {
@@ -142,7 +145,12 @@ export default class AgentService {
 
   async deleteAgentById(id: string | ObjectId): Promise<DeleteResult> {
     try {
-      if (typeof id !== "string" || !ObjectId.isValid(id)) {
+      let validatedAgentId;
+      if (typeof id === "string" && ObjectId.isValid(id)) {
+        validatedAgentId = new ObjectId(id);
+      } else if (id instanceof ObjectId) {
+        validatedAgentId = id;
+      } else {
         throw new Error("Invalid agent ID");
       }
       const objectId = new ObjectId(id);

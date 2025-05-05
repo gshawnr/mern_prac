@@ -1,35 +1,37 @@
-import { FormControl } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 
-function CreateAgent() {
+function CreateProperty() {
+  const navigate = useNavigate();
+
   const [error, setError] = useState(null);
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [telephone, setTelephone] = useState(null);
+  const [agentEmail, setAgentEmail] = useState(null);
+  const [street, setStreet] = useState(null);
+  const [city, setCity] = useState(null);
+  const [province, setProvince] = useState(null);
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
 
-      const agent = { firstName, lastName, email, telephone };
-      const res = await fetch("http://localhost:5000/api/agent", {
+      const property = { agentEmail, street, city, province };
+
+      const res = await fetch("http://localhost:5000/api/property", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(agent),
+        body: JSON.stringify(property),
       });
 
       if (!res.ok) {
-        throw new Error("CreateAgent error: unable to create agent");
+        throw new Error("CreateProperty error: unable to create property");
       }
+      navigate("/properties");
     } catch (err) {
-      console.log("CreateAgent error", err);
       setError(err.message);
     }
   };
-
   return (
     <div>
       {/* Show error message conditionally */}
@@ -43,38 +45,38 @@ function CreateAgent() {
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <label htmlFor="firstName">First Name</label>
+          <label htmlFor="street">Street</label>
           <input
             type="text"
-            name="firstName"
-            onChange={(e) => setFirstName(e.target.value)}
+            name="street"
+            onChange={(e) => setStreet(e.target.value)}
           />
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <label htmlFor="lastName">Last Name</label>
+          <label htmlFor="city">City</label>
           <input
             type="text"
-            name="lastName"
-            onChange={(e) => setLastName(e.target.value)}
+            name="city"
+            onChange={(e) => setCity(e.target.value)}
           />
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="province">Province</label>
           <input
             type="text"
-            name="email"
-            onChange={(e) => setEmail(e.target.value)}
+            name="province"
+            onChange={(e) => setProvince(e.target.value)}
           />
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <label htmlFor="telephone">Telephone #</label>
+          <label htmlFor="agentEmail">Listing Agent Email</label>
           <input
             type="text"
-            name="telephone"
-            onChange={(e) => setTelephone(e.target.value)}
+            name="agentEmail"
+            onChange={(e) => setAgentEmail(e.target.value)}
           />
         </div>
         <button style={{ margin: "10px auto", width: "100%" }} type="submit">
@@ -85,4 +87,4 @@ function CreateAgent() {
   );
 }
 
-export default CreateAgent;
+export default CreateProperty;

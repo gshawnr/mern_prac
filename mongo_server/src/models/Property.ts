@@ -35,7 +35,7 @@ class Property {
       street: this.street,
       city: this.city,
       province: this.province,
-      agent: this.agentId,
+      agentId: this.agentId,
     };
   }
 }

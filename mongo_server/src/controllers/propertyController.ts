@@ -77,13 +77,16 @@ export const addProperty = async (
   next: NextFunction
 ) => {
   try {
+    console.log("#*#*#*#*#* addProperty");
     const propertyService = new PropertyService();
     const agentService = new AgentService();
 
     const { body } = req;
+    console.log("body", body);
     const { street, city, agentEmail, province } = body;
 
     const agents = await agentService.allAgents({ email: agentEmail });
+    console.log("agents", agents);
 
     if (!(agents.length === 1)) {
       res.status(400).json({ message: "agent not found" });
@@ -91,6 +94,8 @@ export const addProperty = async (
     }
 
     const agentId = agents[0]._id;
+    console.log("propetyController agentId", agentId);
+
     const propertyData = { street, city, province, agentId };
 
     const properties = await propertyService.save(propertyData);
