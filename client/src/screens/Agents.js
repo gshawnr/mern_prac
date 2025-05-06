@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
+
+import Agent from "../components/Agent";
 import { getData } from "../utils/api";
 
-import "./Agents.css";
+import styles from "./Agents.module.css";
 
 function Agents() {
   const [error, setError] = useState(null);
@@ -32,22 +34,19 @@ function Agents() {
     }
 
     return (
-      <div className="agents-box">
+      <div className={styles.box}>
         <Button variant="contained" onClick={() => navigate("/")}>
           Home
         </Button>
 
-        <ul className="agents-list">
+        <ul className={styles.list}>
           {agents.map((agent) => {
-            const { firstName, lastName, email, telephone } = agent;
             return (
-              <li key={agent._id} style={{ listStyle: "none" }}>
-                <p>
-                  {firstName} {lastName}
-                </p>
-                <p>{email}</p>
-                <p>{telephone}</p>
-              </li>
+              <div className="box">
+                <li key={agent._id} style={{ listStyle: "none" }}>
+                  <Agent agent={agent} />
+                </li>
+              </div>
             );
           })}
         </ul>

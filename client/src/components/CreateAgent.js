@@ -1,5 +1,5 @@
-import { FormControl } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 function CreateAgent() {
   const [error, setError] = useState(null);
@@ -7,6 +7,8 @@ function CreateAgent() {
   const [lastName, setLastName] = useState(null);
   const [email, setEmail] = useState(null);
   const [telephone, setTelephone] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     try {
@@ -24,6 +26,7 @@ function CreateAgent() {
       if (!res.ok) {
         throw new Error("CreateAgent error: unable to create agent");
       }
+      navigate("/agents");
     } catch (err) {
       console.log("CreateAgent error", err);
       setError(err.message);

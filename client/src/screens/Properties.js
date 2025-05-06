@@ -3,13 +3,13 @@ import { useNavigate } from "react-router";
 import { Button } from "@mui/material";
 
 import { getData } from "../utils/api";
-import PropertyList from "../components/PropertyList";
+import Property from "../components/Property";
 
 import styles from "./Properties.module.css";
 
 function Properties() {
   const [error, setError] = useState(null);
-  const [properties, setProperties] = useState(null);
+  const [properties, setProperties] = useState([]);
 
   const navigate = useNavigate();
 
@@ -27,26 +27,23 @@ function Properties() {
     fetchData();
   }, []);
 
-  const renderContent = () => {
-    if (error) {
-      return <h2>{error.message}</h2>;
-    }
-
-    if (!properties) {
-      return <h2>....Loading</h2>;
-    }
-
-    return <PropertyList properties={properties} />;
-  };
-
   return (
     <div className={styles.box}>
       <Button variant="contained" onClick={() => navigate("/")}>
         Home
       </Button>
 
-      <h1>Properties</h1>
-      {renderContent()}
+      <ul className={styles.list}>
+        {properties.map((property) => {
+          return (
+            <div className={styles.box}>
+              <li key={property._id} style={{ listStyle: "none" }}>
+                <Property property={property} />
+              </li>
+            </div>
+          );
+        })}
+      </ul>
     </div>
   );
 }
